@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXAM - BAC RÉUSSITE INTERNATIONAL</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0b1320; color: #ffffff; min-height: 100vh; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 480px; background: #0b1320; min-height: 100vh; position: relative; padding-bottom: 75px; }
+        
+        /* Modals & Layout */
+        .screen { display: none; padding: 18px; animation: fadeIn 0.25s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Typography & Header Elements */
+        .tag { display: inline-block; background: rgba(255,255,255,0.08); font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; color: #f1c40f; margin-bottom: 12px; font-weight: 600; }
+        h1 { font-size: 1.8rem; font-weight: 800; text-align: center; color: #fff; }
+        h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 14px; }
+        p.subtitle { color: #94a3b8; font-size: 0.88rem; text-align: center; margin-bottom: 22px; line-height: 1.4; }
+
+        /* General UI Controls */
+        .btn-primary { width: 100%; background: #f1c40f; color: #0b1320; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: transform 0.1s ease; margin-top: 14px; text-align: center; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-option { width: 100%; background: #1e293b; border: 1px solid #334155; padding: 16px; border-radius: 14px; margin-bottom: 12px; text-align: left; color: white; cursor: pointer; }
+        .btn-option.selected { border-color: #f1c40f; background: rgba(241, 196, 15, 0.08); }
+        .input-group { margin-bottom: 14px; }
+        .input-group label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 6px; }
+        .input-group input, .input-group select { width: 100%; background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: white; font-size: 0.95rem; }
+
+        /* Cards & Components */
+        .card { background: #1e293b; border-radius: 16px; padding: 16px; margin-bottom: 14px; border: 1px solid #2d3748; }
+        .card-gold { background: linear-gradient(135deg, #1e293b, #2d3748); border: 1px solid #f1c40f; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .progress-bar-bg { background: #0f172a; border-radius: 10px; height: 8px; width: 100%; overflow: hidden; margin-top: 6px; }
+        .progress-fill { background: #2ecc71; height: 100%; border-radius: 10px; }
+
+        /* Top Bar */
+        .top-header { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 10px 16px; border-bottom: 1px solid #1e293b; position: sticky; top: 0; z-index: 90; }
+        .top-badge { background: #1e293b; padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; border: 1px solid #f1c40f; color: #f1c40f; font-weight: bold; }
+
+        /* Navbar */
+        .navbar { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: #0f172a; border-top: 1px solid #1e293b; display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
+        .nav-item { color: #64748b; font-size: 0.7rem; text-align: center; text-decoration: none; cursor: pointer; width: 20%; }
+        .nav-item.active { color: #f1c40f; font-weight: bold; }
+        .nav-icon { font-size: 1.25rem; display: block; margin-bottom: 2px; }
+
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: flex-end; }
+        .modal-card { width: 100%; max-width: 480px; background: #1e293b; border-radius: 20px 20px 0 0; padding: 22px; animation: slideUp 0.25s ease; border-top: 1px solid #334155; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- HEADER CONSTANT (APPRÈS AUTHENTIFICATION) -->
+        <div class="top-header" id="top-header" style="display: none;">
+            <div style="font-size: 0.8rem; font-weight: bold; color: #fff;">🇹🇬 TOGO • BAC D</div>
+            <div class="top-badge"><span id="header-balance">7 000</span> F CFA</div>
+        </div>
+
+        <!-- 1. SPLASH SCREEN -->
+        <div id="screen-splash" class="screen active" style="text-align: center; padding-top: 50px;">
+            <div class="tag">WEST AFRICA • 2026 • EXAM</div>
+            <div style="font-size: 3.5rem; margin: 15px 0;">🌍</div>
+            <h1>EXAM</h1>
+            <p style="color: #f1c40f; font-weight: bold; margin-bottom: 10px;">BAC RÉUSSITE INTERNATIONAL</p>
+            <p class="subtitle">Révise, progresse et réussis ton examen — où que tu sois en Afrique de l'Ouest.</p>
+            <div class="card" style="margin-top: 30px;">
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px;">Chargement de la réussite...</p>
+                <button class="btn-primary" onclick="showScreen('screen-space')">Toucher pour continuer ➔</button>
+            </div>
+        </div>
+
+        <!-- 2. CHOIX ESPACE -->
+        <div id="screen-space" class="screen">
+            <span class="tag">BAC RÉUSSITE • EXAM</span>
+            <h2>Choisis ton espace</h2>
+            <p class="subtitle">Ta langue, tes pays, tes examens. Tu pourras changer plus tard.</p>
+
+            <div class="btn-option selected" onclick="showScreen('screen-country')">
+                <div style="font-size: 1.4rem;">🇫🇷</div>
+                <strong>ESPACE FRANCOPHONE</strong>
+                <p style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px;">Togo • Bénin • Côte d'Ivoire • Senegal...</p>
+            </div>
+
+            <div class="btn-option" onclick="showScreen('screen-country')">
+                <div style="font-size: 1.4rem;">🇬🇧</div>
+                <strong>ESPACE ANGLOPHONE</strong>
+                <p style="font-size: 0.78rem; color: #94a3b8; margin-top: 4px;">Ghana • Nigeria • Liberia • Sierra Leone...</p>
+            </div>
+        </div>
+
+        <!-- 3. SELECTION PAYS -->
+        <div id="screen-country" class="screen">
+            <h2>Choisis ton pays</h2>
+            <p class="subtitle">Ton examen, tes dates, tes épreuves.</p>
+
+            <div class="btn-option selected" onclick="setCountry('Togo')">🇹🇬 <strong>Togo</strong> (Lomé • BEPC • Probatoire • BAC)</div>
+            <div class="btn-option" onclick="setCountry('Bénin')">🇧🇯 <strong>Bénin</strong> (Cotonou • BEPC • BAC)</div>
+            <div class="btn-option" onclick="setCountry('Côte d\'Ivoire')">🇨🇮 <strong>Côte d'Ivoire</strong> (Abidjan • BEPC • BAC)</div>
+            <div class="btn-option" onclick="setCountry('Burkina Faso')">🇧🇫 <strong>Burkina Faso</strong> (Ouagadougou • BEPC • BAC)</div>
+        </div>
+
+        <!-- 4. CLASSE & EXAMEN -->
+        <div id="screen-class" class="screen">
+            <h2>Ta classe & ton examen</h2>
+            <p class="subtitle">Parcours intelligent, adapté à ton pays.</p>
+
+            <div class="card">
+                <label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 8px;">EXAMEN</label>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-primary" style="margin:0; background: #334155; color: white;">BEPC</button>
+                    <button class="btn-primary" style="margin:0; background: #334155; color: white;">Probatoire</button>
+                    <button class="btn-primary" style="margin:0; background: #f1c40f; color: #0b1320;">BAC</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 8px;">SÉRIE / FILIÈRE</label>
+                <div style="display: flex; gap: 6px;">
+                    <button class="btn-primary" style="margin:0; background: #334155; color: white;">C</button>
+                    <button class="btn-primary" style="margin:0; background: #f1c40f; color: #0b1320;">D</button>
+                    <button class="btn-primary" style="margin:0; background: #334155; color: white;">A4</button>
+                    <button class="btn-primary" style="margin:0; background: #334155; color: white;">G2</button>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="showScreen('screen-auth')">Valider ma sélection ➔</button>
+        </div>
+
+        <!-- 5. AUTHENTIFICATION -->
+        <div id="screen-auth" class="screen">
+            <h2>Bienvenue dans ton espace</h2>
+            <p class="subtitle">Retrouve ta progression et ton solde, partout.</p>
+
+            <div class="input-group">
+                <label>Ton prénom</label>
+                <input type="text" id="user-name" value="Moussa">
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="user-email" value="Pilote-power@gmail.com">
+            </div>
+
+            <div class="input-group">
+                <label>Téléphone Mobile Money</label>
+                <div style="display: flex; gap: 8px;">
+                    <select id="user-op" style="width: 45%;">
+                        <option>Yas Money</option>
+                        <option>Moov Money</option>
+                    </select>
+                    <input type="tel" id="user-phone" value="72230580">
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="loginUser()">Créer mon compte 🚀</button>
+        </div>
+
+        <!-- 6. ONGLET 1: ACCUEIL (DASHBOARD) -->
+        <div id="tab-accueil" class="screen">
+            <div class="flex-between" style="margin-bottom: 12px;">
+                <h2 id="dash-greeting" style="margin:0;">Bonjour, Moussa ! 👋</h2>
+            </div>
+
+            <!-- Compte à rebours J-0 -->
+            <div class="card card-gold">
+                <div class="flex-between">
+                    <div>
+                        <div style="font-size: 0.8rem; color: #94a3b8;">Compte à rebours • BAC D</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: #f1c40f;">J - 0</div>
+                        <div style="font-size: 0.78rem; color: #94a3b8;">15 juin 2026 • Togo</div>
+                    </div>
+                    <div style="font-size: 2.2rem;">🏆</div>
+                </div>
+                <p style="font-size: 0.8rem; margin-top: 8px; color: #2ecc71; font-weight: 600;">C'est aujourd'hui, courage !</p>
+            </div>
+
+            <!-- Coach intelligent -->
+            <div class="card">
+                <div style="font-size: 0.78rem; color: #f1c40f; font-weight: bold; margin-bottom: 4px;">🧠 Mon Coach Intelligent</div>
+                <p style="font-size: 0.85rem; color: #e2e8f0; margin-bottom: 8px;">Point faible : pH (Physique-Chimie) — 55%</p>
+                <button class="btn-primary" style="margin:0; padding: 10px; font-size: 0.85rem;" onclick="openPaymentModal()">Débloquer avec Premium — 500 F CFA 🎁</button>
+            </div>
+
+            <!-- Progression des Matières (dont Chimie) -->
+            <h2>Progression générale</h2>
+            <div class="card">
+                <div style="margin-bottom: 10px;">
+                    <div class="flex-between" style="font-size: 0.85rem;">
+                        <span>📐 Mathématiques</span>
+                        <strong style="color: #2ecc71;">72%</strong>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-fill" style="width: 72%;"></div></div>
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <div class="flex-between" style="font-size: 0.85rem;">
+                        <span>🧪 Physique-Chimie (dont Chimie)</span>
+                        <strong style="color: #f1c40f;">58%</strong>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-fill" style="width: 58%; background: #f1c40f;"></div></div>
+                </div>
+
+                <div>
+                    <div class="flex-between" style="font-size: 0.85rem;">
+                        <span>🧬 SVT</span>
+                        <strong style="color: #2ecc71;">84%</strong>
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-fill" style="width: 84%;"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. ONGLET 2: COURS -->
+        <div id="tab-cours" class="screen">
+            <h2>Cours & Fiches de Révision</h2>
+            <p class="subtitle" style="text-align: left; margin-bottom: 15px;">Programme officiel BAC D (Togo & Afrique de l'Ouest)</p>
+            
+            <div class="card">
+                <h3>🧪 Chimie & Cinétique</h3>
+                <p style="font-size: 0.8rem; color: #94a3b8; margin: 4px 0 10px 0;">Acides, bases, réactions et solutions aqueuses.</p>
+                <button class="btn-primary" style="margin:0; padding: 10px;" onclick="openPaymentModal()">🔒 Débloquer la fiche complète</button>
+            </div>
+
+            <div class="card">
+                <h3>📐 Fonctions & Intégrales</h3>
+                <p style="font-size: 0.8rem; color: #94a3b8; margin: 4px 0 10px 0;">Limites, dérivées et calcul d'aires.</p>
+                <button class="btn-primary" style="margin:0; padding: 10px;" onclick="openPaymentModal()">🔒 Débloquer la fiche complète</button>
+            </div>
+        </div>
+
+        <!-- 8. ONGLET 3: QUIZ -->
+        <div id="tab-quiz" class="screen">
+            <h2>Mode Quiz & QCM</h2>
+            <p class="subtitle" style="text-align: left; margin-bottom: 15px;">Évaluations chrono et corrections instantanées.</p>
+
+            <div class="card card-gold">
+                <h3>⏱️ Quiz de Chimie (BAC D)</h3>
+                <p style="font-size: 0.82rem; color: #e2e8f0; margin: 6px 0 12px 0;">10 questions • 15 minutes • Correction détaillée</p>
+                <button class="btn-primary" style="margin:0;" onclick="openPaymentModal()">Lancer le Quiz (Pass Premium)</button>
+            </div>
+        </div>
+
+        <!-- 9. ONGLET 4: WALLET -->
+        <div id="tab-wallet" class="screen">
+            <h2>Portefeuille & Premium</h2>
+            
+            <div class="card card-gold" style="text-align: center; padding: 22px;">
+                <span style="font-size: 0.8rem; color: #94a3b8;">Solde actuel</span>
+                <div style="font-size: 2.2rem; font-weight: 800; color: #f1c40f; margin: 8px 0;"><span id="wallet-balance">7 000</span> F CFA</div>
+                <p style="font-size: 0.75rem; color: #2ecc71; margin-bottom: 12px;">Opérateur actif : <strong id="op-display">Yas Money Togo</strong></p>
+                <button class="btn-primary" style="margin: 0;" onclick="openRechargeModal()">⚡ Recharger mon compte</button>
+            </div>
+
+            <div class="card">
+                <h3>⭐ Pass Premium</h3>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 4px 0 14px 0;">500 F CFA / mois • Corrigés complets & Fiches illimitées.</p>
+                <button class="btn-primary" style="margin:0;" onclick="openPaymentModal()">Activer Premium (500 F CFA)</button>
+            </div>
+        </div>
+
+        <!-- 10. ONGLET 5: OUTILS -->
+        <div id="tab-outils" class="screen">
+            <h2>Outils & Fonctionnalités</h2>
+            <div class="card">
+                <h3>📡 Partage Hors-Ligne (P2P)</h3>
+                <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">Partage tes fiches téléchargées avec tes camarades sans connexion.</p>
+            </div>
+            <div class="card">
+                <h3>🎧 SOS Prof / Audio</h3>
+                <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">Écoute des résumés vocaux de 3 minutes pour retenir l'essentiel.</p>
+            </div>
+        </div>
+
+        <!-- NAVIGATION BAR (5 ONGLETS) -->
+        <div class="navbar" id="main-navbar" style="display: none;">
+            <div class="nav-item active" onclick="switchTab('tab-accueil', this)"><span class="nav-icon">🏠</span>Accueil</div>
+            <div class="nav-item" onclick="switchTab('tab-cours', this)"><span class="nav-icon">📚</span>Cours</div>
+            <div class="nav-item" onclick="switchTab('tab-quiz', this)"><span class="nav-icon">⚡</span>Quiz</div>
+            <div class="nav-item" onclick="switchTab('tab-wallet', this)"><span class="nav-icon">💳</span>Wallet</div>
+            <div class="nav-item" onclick="switchTab('tab-outils', this)"><span class="nav-icon">🛠️</span>Outils</div>
+        </div>
+
+        <!-- MODAL PAIEMENT PREMIUM (PRELÈVEMENT DIRECT SOLDE / YAS / MOOV) -->
+        <div class="modal-overlay" id="modal-payment">
+            <div class="modal-card">
+                <h3>Pass Premium • 500 F CFA</h3>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin: 6px 0 14px 0;">Corrigés complets et points de méthode. Solde actuel : <strong style="color: #f1c40f;" id="modal-balance">7 000 F CFA</strong></p>
+                
+                <label style="font-size: 0.78rem; color: #94a3b8;">Opérateurs disponibles au Togo :</label>
+                <div style="display: flex; gap: 8px; margin: 8px 0 16px 0;">
+                    <button class="btn-primary" style="margin:0; background: #f1c40f; color: #0b1320;" id="mod-yas" onclick="selectOp('Yas')">🟡 Yas Money</button>
+                    <button class="btn-primary" style="margin:0; background: #334155; color: white;" id="mod-moov" onclick="selectOp('Moov')">🔵 Moov Money</button>
+                </div>
+
+                <button class="btn-primary" onclick="confirmPayment()">Payer 500 F CFA et Activer 🎉</button>
+                <button class="btn-primary" style="background: transparent; color: #94a3b8;" onclick="closeModals()">Annuler</button>
+            </div>
+        </div>
+
+        <!-- MODAL RECHARGE -->
+        <div class="modal-overlay" id="modal-recharge">
+            <div class="modal-card">
+                <h3>Recharger votre compte</h3>
+                <p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 12px;">Choisissez le montant à déposer via Yas ou Moov Money :</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+                    <button class="btn-option" style="text-align:center; margin:0;" onclick="addCash(1000)">+ 1 000 F</button>
+                    <button class="btn-option" style="text-align:center; margin:0;" onclick="addCash(2000)">+ 2 000 F</button>
+                    <button class="btn-option" style="text-align:center; margin:0;" onclick="addCash(5000)">+ 5 000 F</button>
+                    <button class="btn-option" style="text-align:center; margin:0;" onclick="addCash(10000)">+ 10 000 F</button>
+                </div>
+                <button class="btn-primary" style="background: transparent; color: #94a3b8;" onclick="closeModals()">Fermer</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let balance = 7000;
+        let selectedOperator = 'Yas Money';
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function setCountry(country) { showScreen('screen-class'); }
+
+        function loginUser() {
+            let name = document.getElementById('user-name').value || 'Moussa';
+            let op = document.getElementById('user-op').value || 'Yas Money';
+            selectedOperator = op;
+            
+            document.getElementById('dash-greeting').innerText = `Bonjour, ${name} ! 👋`;
+            document.getElementById('op-display').innerText = `${selectedOperator} Togo`;
+            document.getElementById('top-header').style.display = 'flex';
+            document.getElementById('main-navbar').style.display = 'flex';
+            
+            showScreen('tab-accueil');
+        }
+
+        function switchTab(screenId, el) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+            showScreen(screenId);
+        }
+
+        function openPaymentModal() {
+            document.getElementById('modal-balance').innerText = `${balance} F CFA`;
+            document.getElementById('modal-payment').style.display = 'flex';
+        }
+
+        function openRechargeModal() {
+            document.getElementById('modal-recharge').style.display = 'flex';
+        }
+
+        function closeModals() {
+            document.getElementById('modal-payment').style.display = 'none';
+            document.getElementById('modal-recharge').style.display = 'none';
+        }
+
+        function selectOp(op) {
+            selectedOperator = op === 'Yas' ? 'Yas Money' : 'Moov Money';
+            document.getElementById('mod-yas').style.background = op === 'Yas' ? '#f1c40f' : '#334155';
+            document.getElementById('mod-yas').style.color = op === 'Yas' ? '#0b1320' : 'white';
+            document.getElementById('mod-moov').style.background = op === 'Moov' ? '#f1c40f' : '#334155';
+            document.getElementById('mod-moov').style.color = op === 'Moov' ? '#0b1320' : 'white';
+        }
+
+        function confirmPayment() {
+            if (balance >= 500) {
+                balance -= 500;
+                updateBalanceDisplay();
+                closeModals();
+                alert(`🎉 FÉLICITATIONS !\n\nVotre Pass Premium a été activé avec succès via ${selectedOperator}.\nNouveau solde : ${balance} F CFA.`);
+            } else {
+                alert("Solde insuffisant. Veuillez recharger votre portefeuille.");
+            }
+        }
+
+        function addCash(amount) {
+            balance += amount;
+            updateBalanceDisplay();
+            closeModals();
+            alert(`✅ Recharge réussie !\n\n+${amount} F CFA ajoutés à votre compte via ${selectedOperator}.`);
+        }
+
+        function updateBalanceDisplay() {
+            document.getElementById('dash-balance') && (document.getElementById('dash-balance').innerText = balance);
+            document.getElementById('wallet-balance').innerText = balance;
+            document.getElementById('header-balance').innerText = balance;
+        }
+    </script>
+</body>
+</html>
